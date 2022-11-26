@@ -15,10 +15,9 @@ app.use(express.json());
 
 
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}}@cluster0.hzxv0d7.mongodb.net/?retryWrites=true&w=majority`;
-
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.c20znev.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
+console.log(uri)
 // client.connect(err => {
 //   const collection = client.db("test").collection("devices");
 //   // perform actions on the collection object
@@ -26,34 +25,36 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 // });
 async function run() {
   try {
-    const oldgoodbikeOptionCollection = client.db('goodoldbike').collection('gooldbike');
-    const bookingCollection = client.db('goodoldbike').collection('bookings'); 
-    const usersCollection = client.db('goodoldbike').collection('users'); 
+    const oldgoodbikeOptionCollection = client.db('oldgoodbike').collection('bikes');
+    const bookingsCollection = client.db('oldgoodbike').collection('bookings'); 
+    // const usersCollection = client.db('goodoldbike').collection('users'); 
 
-    app.get('/gooldbike', async(req,res) => {
+    app.get('/bikes', async(req,res) => {
       const query = {};
       const options = await oldgoodbikeOptionCollection.find(query).toArray();
+      res.send(options);
     });
 
-    app.get('/bookings', async (req, res) => {
-      const email = req.query.email;
-      const query = {email: email};
-      const bookings = await bookingsCollection.find(query).toArray();
-      res.send(bookings);
-    })
+    // app.get('/bookings', async (req, res) => {
+    //   const email = req.query.email;
+    //   const query = {email: email};
+    //   const bookings = await bookingsCollection.find(query).toArray();
+    //   res.send(bookings);
+    // })
 
     app.post('/bookings', async(req, res) =>{
-      const booking = req.bodyconsole.log(booking);
-      const result = await bookingCollection.insertOne(booking);
+      const booking = req.body
+      console.log(booking);
+      const result = await bookingsCollection.insertOne(booking);
       res.send(result);
     })
 
-    app.post('/users', async(req, res) =>{
-      const user = req.body;
-      console.log(user);
-      const result = await usersCollection.insertOne(user);
-      res.send(result);
-    } )
+    // app.post('/users', async(req, res) =>{
+    //   const user = req.body;
+    //   console.log(user);
+    //   const result = await usersCollection.insertOne(user);
+    //   res.send(result);
+    // } )
   }
   finally {
 
