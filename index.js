@@ -4,7 +4,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
 
 
-const port = process.env.PORT || 5000;
+
 
 const app = express();
 
@@ -58,6 +58,7 @@ async function run() {
     //   const result = await usersCollection.insertOne(user);
     //   res.send(result);
     // } )
+
   }
   finally {
 
@@ -70,4 +71,10 @@ app.get('/', async (req, res) => {
   res.send('oldgood bike server is running')
 })
 
+
+
 app.listen(port, () => console.log(`OldGood bike running on ${port}`))
+
+
+//DB_USER=oldgoodbike
+//DB_PASS=4hLbOCZVkdIpKzuA
