@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 
@@ -23,6 +24,26 @@ console.log(uri)
 //   // perform actions on the collection object
 //   client.close();
 // });
+
+function verifyJWT(req, res, next) {
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+      return res.status(401).send('unauthorized access');
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
+      if (err) {
+          return res.status(403).send({ message: 'forbidden access' })
+      }
+      req.decoded = decoded;
+      next();
+  })
+
+}
+
 async function run() {
   try {
     const oldgoodbikeOptionCollection = client.db('oldgoodbike').collection('bikes');
@@ -36,9 +57,13 @@ async function run() {
       res.send(options);
     });
 
-    app.get('/bookings', async (req, res) => {
+    app.get('/bookings', verifyJWT, async (req, res) => {
       const email = req.query.email;
-      // console.log(email);
+      const decodedEmail = req.decoded.email;
+      if(email !== decodedEmail) {
+        return res.status(403).send({message: 'forbidden access'});
+      }
+      console.log(email);
       const query = {email: email };
       const bookings = await bookingsCollection.find(query).toArray();
       res.send(bookings);
@@ -51,7 +76,23 @@ async function run() {
       res.send(result);
     })
 
-    
+    app.get('/jwt', async(req, res) =>{
+        const email = req.query.email;
+        const query = {email: email};
+        const user = await usersCollection.findOne(query);
+        if(user){
+          const token = jwt.sign({email}, process.env.ACCESS_TOKEN, {expiresIn: '1h'})
+          return res.send({accessToken: token});
+        }
+
+        res.status(403).send({accessToken: ''})
+    })
+
+    app.get('/users', async(req, res) =>{
+      const query ={};
+      const users = await usersCollection.find(query).toArray();
+      res.send(users);
+    })
 
     app.post('/users', async(req, res) =>{
       const user = req.body;
@@ -59,6 +100,13 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.send(result);
     } )
+
+    app.get('/users/:email',  async (req, res) => {
+      const email = req.params.email
+      const query = { email: email }
+      const user = await usersCollection.findOne(query)
+      res.send(user)
+  })
 
   }
   finally {
