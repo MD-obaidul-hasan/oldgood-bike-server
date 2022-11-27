@@ -30,7 +30,8 @@ async function run() {
     // const usersCollection = client.db('goodoldbike').collection('users'); 
 
     app.get('/bikes', async(req,res) => {
-      const query = {};
+      const catagory = req.query.catagory
+      const query = {catagory:catagory};
       const options = await oldgoodbikeOptionCollection.find(query).toArray();
       res.send(options);
     });
