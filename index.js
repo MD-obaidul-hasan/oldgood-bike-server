@@ -27,7 +27,7 @@ async function run() {
   try {
     const oldgoodbikeOptionCollection = client.db('oldgoodbike').collection('bikes');
     const bookingsCollection = client.db('oldgoodbike').collection('bookings'); 
-    // const usersCollection = client.db('goodoldbike').collection('users'); 
+    const usersCollection = client.db('oldgoodbike').collection('users'); 
 
     app.get('/bikes', async(req,res) => {
       const catagory = req.query.catagory
@@ -36,12 +36,13 @@ async function run() {
       res.send(options);
     });
 
-    // app.get('/bookings', async (req, res) => {
-    //   const email = req.query.email;
-    //   const query = {email: email};
-    //   const bookings = await bookingsCollection.find(query).toArray();
-    //   res.send(bookings);
-    // })
+    app.get('/bookings', async (req, res) => {
+      const email = req.query.email;
+      // console.log(email);
+      const query = {email: email };
+      const bookings = await bookingsCollection.find(query).toArray();
+      res.send(bookings);
+    })
 
     app.post('/bookings', async(req, res) =>{
       const booking = req.body
@@ -52,12 +53,12 @@ async function run() {
 
     
 
-    // app.post('/users', async(req, res) =>{
-    //   const user = req.body;
-    //   console.log(user);
-    //   const result = await usersCollection.insertOne(user);
-    //   res.send(result);
-    // } )
+    app.post('/users', async(req, res) =>{
+      const user = req.body;
+      console.log(user);
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    } )
 
   }
   finally {
