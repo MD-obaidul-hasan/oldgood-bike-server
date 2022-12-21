@@ -94,12 +94,12 @@ async function run() {
       res.send(users);
     })
 
-    // app.get('/users/admin/:id', async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: ObjectId(id)}
-    //   const user = await usersCollection.findOne(query);
-    //   res.send({ isAdmin: user?.role === 'admin'});
-    // })
+    app.get('/users/admin/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id)}
+      const user = await usersCollection.findOne(query);
+      res.send({ isAdmin: user?.role === 'admin'});
+    })
 
     app.get('/users/admin/:email', async (req, res) => {
       const email = req.params.email;
